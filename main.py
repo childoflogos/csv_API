@@ -1,10 +1,7 @@
 import json
-from threading import Thread
 from flask import Flask, request
-from flask_restful import Api, Resource, reqparse
-import requests
+from flask_restful import Api, Resource
 import pandas as pd
-import time
 import database
 
 db = database.Database()
@@ -87,27 +84,8 @@ def split_list(lst):
     sublists.append(sublist)
     return sublists
 
-def test():
-    time.sleep(1)
-    url = 'http://127.0.0.1:5000/csv_api'
-    params = {'file_name': 'data.csv'}
-    response = requests.delete(url, params=params)
-    print(response.text)
-    files = {'file': open('data.csv', 'rb')}
-    response = requests.post(url, files=files)
-    print(response.text)
-    params = {
-        'file_name': 'data.csv',
-        'filter': 'true',
-        'filter_columns': json.dumps(['ETH', 'USDT'])
-    }
-    response = requests.get(url, params=params)
-    print(response.text)
-
 if __name__ == '__main__':
     app = Flask(__name__)
     api = Api(app)
     api.add_resource(CsvApi, '/csv_api', '/csv_api/')
-    th = Thread(target=test)
-    th.start()
     app.run()
